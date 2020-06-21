@@ -1,0 +1,46 @@
+
+
+Codigo para leitura de streams de tweets, baseados em termos de busca. Usa Streaming API do Twitter.
+
+https://developer.twitter.com/en/docs/tutorials/consuming-streaming-data
+
+Arquitetura baseada em PRODUTOR CONSUMIDOR, onde um sistema único se conecta na API do Twitter, enviando o conjunto de todas as palavres chaves definidas. Este produtor irá receber o flow em tempo real, e irá enviar para consumidores assíncronos, que irão tratar cada tweet, determinar de qual tema ele se trata, e fazer os processamentos apropriados.
+
+A pasta dataset contem diretorios de temas a serem analisados. Cada tema tem uma série de arquivos com palavras chave.
+
+Os parametros são passados via variavel de ambiente, e devem ser definidos no arquivo etc/env.
+
+A variavel de ambiente DATASET define qual conjunto de dados sera rodado.
+
+
+Componentes utilizados 
+
+- Python 3
+- Celery (https://docs.celeryproject.org/) para gerenciar execução de tasks remotas assíncronas
+- RabbitMQ (https://www.rabbitmq.com/) como broker de dados
+- Redis (https://redis.io/) para armazenamento de dados temporários
+- Docker, para empacotamento / containerizacao
+- Docker Compose, para rodar rabbitmq e redis
+
+Para montar ambiente
+
+- MAC / Windows: instalar cliente Docker - https://www.docker.com/
+- Em um terminal, dentro da pasta do projeto, rodar make build para compilar ambiente
+- São necesários 3 terminais para rodar tudo:
+
+Terminal 1:
+> docker-compose up
+
+Terminal 2:
+> make processor
+
+Terminal 3:
+> make grabber
+
+Para rodar um relatório:
+> make report
+
+Para limpar o conteúdo
+> make clean
+
+-

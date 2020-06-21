@@ -1,0 +1,26 @@
+version: '3.4'
+
+services:
+  redis:
+    image: redis:5.0.7-alpine
+    ports:
+      - 6379:6379
+    container_name: tweets_redis
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: tweets_rabbit
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+volumes:
+  data:
+
+networks:
+  redis:
+    external:
+      name: tweets_default
+  rabbitmq:
+    external:
+      name: tweets_default
