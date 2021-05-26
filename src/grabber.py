@@ -3,13 +3,17 @@
 import os
 import sys
 
+import simplejson
 from dataset import load_dataset
-from processor import parse_tweet
+from processor import parse, write
 from tweepy import OAuthHandler, Stream
 from tweepy.streaming import StreamListener
 
 
 class GrabberListener(StreamListener):
+    def __init__(self):
+        self.counter = 0
+
     """
     Processa recepcao de um tweet no socket HTTP
     """
@@ -17,7 +21,10 @@ class GrabberListener(StreamListener):
         """
         Tweet recebido. Vamos mandar para o processamento assincrono...
         """
-        parse_tweet.delay(data)
+        parse.delay(data)
+        write.delay(data)
+        print(self.counter)
+        self.counter += 1
         return True
 
     def on_error(self, status):
