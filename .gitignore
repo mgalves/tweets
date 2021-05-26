@@ -5,3 +5,7 @@ bin
 lib
 include
 etc/env
+
+dados/
+dump.txt
+
