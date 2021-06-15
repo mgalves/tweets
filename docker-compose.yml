@@ -1,6 +1,18 @@
 version: '3.4'
 
 services:
+  mongodb:
+    image : mongo
+    container_name: mongodb
+    environment:
+    - PUID=1000
+    - PGID=1000
+    volumes:
+    - ./database:/data/db
+    ports:
+    - 27017:27017
+    restart: unless-stopped
+
   redis:
     image: redis:5.0.7-alpine
     ports:
@@ -14,6 +26,32 @@ services:
       - "5672:5672"
       - "15672:15672"
 
+  processor:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: tweets
+    container_name: tweets_processor
+    command: /opt/tweets/cmd_run_processor.sh
+    volumes:
+      - ./src:/opt/tweets
+      - ./datasets:/opt/datasets
+    env_file:
+      - ./etc/env
+
+  grabber:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: tweets
+    container_name: tweets_grabber
+    command: /opt/tweets/cmd_run_grabber.sh
+    volumes:
+      - ./src:/opt/tweets
+      - ./datasets:/opt/datasets
+    env_file:
+      - ./etc/env
+
 volumes:
   data:
 
@@ -22,5 +60,8 @@ networks:
     external:
       name: tweets_default
   rabbitmq:
+    external:
+      name: tweets_default
+  processor:
     external:
       name: tweets_default

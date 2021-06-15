@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*
 import logging
 import os
+import pymongo
 import re
 from time import time
 
@@ -80,7 +81,7 @@ class ParserTask(app.Task):
         Extract hashtags and add to sorted set
         """
         for hashtag in hashtags:
-            self.REDIS.zincrby(f"hashtags_{key}", 1, "#" + hashtag["text"])
+            self.REDIS.zincrby(f"hashtags_{key}", 1, "#" + hashtag["text"].lower())
 
     def __parse_mentions(self, key, mentions):
         """
@@ -132,11 +133,16 @@ class PersistTask(app.Task):
     name = 'PersistTask'
 
     def __init__(self):
-        self.output = open("dump.txt", "w")
+        from pymongo import MongoClient
+        self.client = MongoClient(os.getenv("MONGODB_HOST"))
+        self.db = self.client["tweets"]
+        self.collection = self.db.get_collection(os.getenv("DATASET"))
 
     def run(self, tweet):
-        self.output.write(tweet)
-        self.output.flush()
+        t = simplejson.loads(tweet)
+        t["_id"] = t["id"]
+        self.collection.insert_one(t)
+
 
 app.tasks.register(PersistTask())
 write = app.tasks[PersistTask.name]

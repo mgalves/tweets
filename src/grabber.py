@@ -23,8 +23,8 @@ class GrabberListener(StreamListener):
         """
         parse.delay(data)
         write.delay(data)
-        print(self.counter)
         self.counter += 1
+        print(self.counter)
         return True
 
     def on_error(self, status):
