@@ -20,6 +20,14 @@ processor:
 clean:
 	docker run --rm -ti --network tweets_default --env-file etc/env -v ${ROOT_DIR}/src:/opt/tweets -v ${ROOT_DIR}/datasets:/opt/datasets ${IMAGE} /opt/tweets/cmd_clean.sh
 
-report:
-	docker run --rm -ti --network tweets_default --env-file etc/env -v ${ROOT_DIR}/src:/opt/tweets -v ${ROOT_DIR}/datasets:/opt/datasets ${IMAGE} /opt/tweets/cmd_run_report.sh
+redis-report:
+	docker run --rm -ti --network tweets_default --env-file etc/env -v ${ROOT_DIR}/src:/opt/tweets -v ${ROOT_DIR}/datasets:/opt/datasets ${IMAGE} /opt/tweets/cmd_run_report.sh redis report
 	
+redis-dump:
+	docker run --rm -ti --network tweets_default --env-file etc/env -v ${ROOT_DIR}/src:/opt/tweets -v ${ROOT_DIR}/datasets:/opt/datasets ${IMAGE} /opt/tweets/cmd_run_report.sh redis dump
+
+mongo-report:
+	docker run --rm -ti --network tweets_default --env-file etc/env -v ${ROOT_DIR}/src:/opt/tweets -v ${ROOT_DIR}/datasets:/opt/datasets ${IMAGE} /opt/tweets/cmd_run_report.sh mongo report
+
+mongo-dump:
+	docker run --rm -ti --network tweets_default --env-file etc/env -v ${ROOT_DIR}/src:/opt/tweets -v ${ROOT_DIR}/datasets:/opt/datasets ${IMAGE} /opt/tweets/cmd_run_report.sh mongo dump
